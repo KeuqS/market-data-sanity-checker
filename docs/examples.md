@@ -177,7 +177,7 @@ jobs:
             --format json > report.json
       - name: Upload the report
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: market-data-report
           path: report.json
@@ -188,8 +188,14 @@ jobs:
 If you prefer a self-contained visual report, replace the JSON redirection and artifact path with:
 
 ```bash
-mdsc check --file data/prices.csv --fail-on critical --min-score 80 --html report.html
+npx --yes market-data-sanity-checker check \
+  --file data/prices.csv \
+  --fail-on critical \
+  --min-score 80 \
+  --html report.html
 ```
+
+For the HTML variant, change the artifact step's `path:` to `report.html`.
 
 For a local smoke test, use the shipped anomalous fixture; it intentionally exits `1` while still producing a report:
 
@@ -198,6 +204,9 @@ pnpm exec mdsc check --file tests/fixtures/mob-st-unadjusted-split.json --fail-o
 ```
 
 The command should report the `SPLIT_NOT_ADJUSTED` finding and create parseable `report.json` before returning the failing gate status.
+
+This smoke test prints `SPLIT_NOT_ADJUSTED`, scores 60/100, exits `1`, and leaves a parseable
+`report.json` for inspection.
 
 ## Exit codes for CI
 
